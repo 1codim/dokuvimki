@@ -404,7 +404,7 @@ class DokuVimKi:
         vim.command('silent! buffer! ' + self.buffers['index'].num)
         vim.command('setlocal modifiable')
         vim.command('setlocal nonumber')
-        vim.command('syn match DokuVimKi_NS /^.*\//')
+        vim.command('syn match DokuVimKi_NS /^.*\\//')
         vim.command('syn match DokuVimKi_CURNS /^ns:/')
 
         vim.command('hi DokuVimKi_NS term=bold cterm=bold ctermfg=LightBlue gui=bold guifg=LightBlue')
@@ -497,8 +497,8 @@ class DokuVimKi:
                 maxlen = max(len(change['name']) for change in changes)
                 fmt = '{name:' + str(maxlen) + '}\t{lastModified}\t{version}\t{author}'
                 self.buffers['changes'].buf[:] = list(reversed([fmt.format(**change) for change in changes]))
-                vim.command('syn match DokuVimKi_REV_PAGE /^\(\w\|:\)*/')
-                vim.command('syn match DokuVimKi_REV_TS /\s\d*\s/')
+                vim.command('syn match DokuVimKi_REV_PAGE /^\\(\\w\\|:\\)*/')
+                vim.command('syn match DokuVimKi_REV_TS /\\s\\d*\\s/')
 
                 vim.command('hi DokuVimKi_REV_PAGE cterm=bold ctermfg=Yellow gui=bold guifg=Yellow')
                 vim.command('hi DokuVimKi_REV_TS cterm=bold ctermfg=Yellow gui=bold guifg=Yellow')
@@ -536,9 +536,9 @@ class DokuVimKi:
                 print("loaded revisions for :%s" % wp, file=sys.stdout)
                 vim.command('map <silent> <buffer> <enter> :Py dokuvimki.rev_edit()<CR>')
 
-                vim.command('syn match DokuVimKi_REV_PAGE /^\(\w\|:\)*/')
-                vim.command('syn match DokuVimKi_REV_TS /\s\d*\s/')
-                vim.command('syn match DokuVimKi_REV_CHANGE /\s\w\{1}\s/')
+                vim.command('syn match DokuVimKi_REV_PAGE /^\\(\\w\\|:\\)*/')
+                vim.command('syn match DokuVimKi_REV_TS /\\s\\d*\\s/')
+                vim.command('syn match DokuVimKi_REV_CHANGE /\\s\\w\\{1}\\s/')
 
                 vim.command('hi DokuVimKi_REV_PAGE term=bold cterm=bold ctermfg=Yellow gui=bold guifg=Yellow')
                 vim.command('hi DokuVimKi_REV_TS term=bold cterm=bold ctermfg=Yellow gui=bold guifg=Yellow')
@@ -827,8 +827,8 @@ class DokuVimKi:
             ns = ''
 
         # look for link syntax on the left and right from the current curser position
-        reL = re.compile('\[{2}[^]]*$')  # opening link syntax
-        reR = re.compile('^[^\[]*]{2}')  # closing link syntax
+        reL = re.compile('\\[{2}[^]]*$')  # opening link syntax
+        reR = re.compile('^[^\\[]*]{2}')  # closing link syntax
 
         L = reL.search(line[:col])
         R = reR.search(line[col:])
@@ -848,7 +848,7 @@ class DokuVimKi:
 
                 # this is _almost_ a rip off of DokuWikis resolve_id() function
                 if id[0] == '.':
-                    re_sanitize = re.compile('(\.(?=[^:\.]))')
+                    re_sanitize = re.compile('(\\.(?=[^:\\.]))')
                     id = re_sanitize.sub('.:', id)
                     id = ns + ':' + id
                     path = id.split(':')
@@ -1005,8 +1005,8 @@ class Buffer:
             vim.command('autocmd! BufEnter <buffer> Py dokuvimki.buffer_enter("' + self.name + '")')
             vim.command('autocmd! BufLeave <buffer> Py dokuvimki.buffer_leave("' + self.name + '")')
             vim.command('autocmd! BufDelete <buffer> Py dokuvimki.close("%s")' % name)
-            vim.command("setlocal statusline=%{'[wp]\ " + self.name + "'}\ %r\ [%c,%l][%p]")
+            vim.command("setlocal statusline=%{'[wp]\\ " + self.name + "'}\\ %r\\ [%c,%l][%p]")
 
         if type == 'nowrite':
             self.diff = {}
-            vim.command("setlocal statusline=%{'[wp]\ " + self.name + "'}\ %r\ [%c,%l][%p%%]")
+            vim.command("setlocal statusline=%{'[wp]\\ " + self.name + "'}\\ %r\\ [%c,%l][%p%%]")
